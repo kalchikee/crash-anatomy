@@ -88,8 +88,16 @@ function addMapData(geojson) {
   // Remove existing source/layers if re-adding after filter
   ['crashes-heat', 'crashes-clusters', 'crashes-cluster-count', 'crashes-points']
     .forEach(id => { if (map.getLayer(id)) map.removeLayer(id); });
-  if (map.getSource('crashes')) map.removeSource('crashes');
+  if (map.getSource('crashes'))      map.removeSource('crashes');
+  if (map.getSource('crashes-heat-src')) map.removeSource('crashes-heat-src');
 
+  // Separate unclustered source for heatmap (clustering hides individual points at low zoom)
+  map.addSource('crashes-heat-src', {
+    type: 'geojson',
+    data: geojson,
+  });
+
+  // Clustered source for circle layers
   map.addSource('crashes', {
     type: 'geojson',
     data: geojson,
@@ -98,26 +106,25 @@ function addMapData(geojson) {
     clusterRadius: 40,
   });
 
-  // ── Heatmap layer (z 0–10) ───────────────────────────
+  // ── Heatmap layer (z 0–12) — uses unclustered source ─
   map.addLayer({
     id: 'crashes-heat',
     type: 'heatmap',
-    source: 'crashes',
-    filter: ['!', ['has', 'point_count']],
-    maxzoom: 11,
+    source: 'crashes-heat-src',
+    maxzoom: 13,
     paint: {
-      'heatmap-weight': ['interpolate', ['linear'], ['get', 'fat'], 1, 0.4, 5, 1],
-      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 2, 0.5, 10, 2.5],
-      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 2, 4, 10, 20],
-      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 9, 0.9, 11, 0],
+      'heatmap-weight': ['interpolate', ['linear'], ['get', 'fat'], 1, 0.5, 5, 1],
+      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 2, 1, 6, 3, 12, 6],
+      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 2, 18, 6, 30, 10, 40, 13, 20],
+      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.85, 13, 0],
       'heatmap-color': [
         'interpolate', ['linear'], ['heatmap-density'],
-        0,    'rgba(0,0,100,0)',
-        0.15, 'rgba(30,100,220,0.7)',
-        0.35, 'rgba(0,220,120,0.85)',
-        0.60, 'rgba(255,200,0,0.9)',
-        0.80, 'rgba(255,100,0,0.95)',
-        1.0,  'rgba(230,30,30,1)',
+        0,    'rgba(0,0,80,0)',
+        0.1,  'rgba(20,80,200,0.6)',
+        0.3,  'rgba(0,200,120,0.85)',
+        0.55, 'rgba(255,200,0,0.9)',
+        0.75, 'rgba(255,90,0,0.95)',
+        1.0,  'rgba(220,20,20,1)',
       ],
     }
   });
@@ -251,9 +258,8 @@ function applyFilters() {
 
   filteredGeoJSON = { type: 'FeatureCollection', features: filtered };
 
-  if (map.getSource('crashes')) {
-    map.getSource('crashes').setData(filteredGeoJSON);
-  }
+  if (map.getSource('crashes'))          map.getSource('crashes').setData(filteredGeoJSON);
+  if (map.getSource('crashes-heat-src')) map.getSource('crashes-heat-src').setData(filteredGeoJSON);
 
   updateHeaderStats(filtered, summaryStats);
   updateChartsFromFiltered(filtered);
