@@ -113,18 +113,22 @@ function addMapData(geojson) {
     source: 'crashes-heat-src',
     maxzoom: 13,
     paint: {
-      'heatmap-weight': ['interpolate', ['linear'], ['get', 'fat'], 1, 0.5, 5, 1],
-      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 2, 1, 6, 3, 12, 6],
-      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 2, 18, 6, 30, 10, 40, 13, 20],
-      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.85, 13, 0],
+      // Constant weight — we want density, not totals
+      'heatmap-weight': 0.6,
+      // Low intensity at national zoom so only true hotspots hit the warm end
+      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 2, 0.12, 5, 0.5, 9, 1.5, 12, 4],
+      // Very small radius at national zoom — grows as you zoom in
+      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 2, 3, 5, 7, 8, 18, 12, 28],
+      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 11, 0.88, 13, 0],
       'heatmap-color': [
         'interpolate', ['linear'], ['heatmap-density'],
-        0,    'rgba(0,0,80,0)',
-        0.1,  'rgba(20,80,200,0.6)',
-        0.3,  'rgba(0,200,120,0.85)',
-        0.55, 'rgba(255,200,0,0.9)',
-        0.75, 'rgba(255,90,0,0.95)',
-        1.0,  'rgba(220,20,20,1)',
+        0,    'rgba(0,0,0,0)',
+        0.05, 'rgba(10,50,180,0.5)',
+        0.2,  'rgba(0,180,255,0.75)',
+        0.4,  'rgba(0,230,100,0.85)',
+        0.6,  'rgba(255,210,0,0.92)',
+        0.8,  'rgba(255,80,0,0.97)',
+        1.0,  'rgba(200,0,0,1)',
       ],
     }
   });
