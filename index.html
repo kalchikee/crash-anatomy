@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crash Anatomy — Fatal Traffic Collisions in the US (2019–2023)</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── HEADER ─────────────────────────────────────────────── -->
+  <header id="app-header">
+    <div id="title-block">
+      <h1>Crash Anatomy</h1>
+      <p>Every fatal traffic collision in the US · 2019–2023 · NHTSA FARS</p>
+    </div>
+    <div id="stats-bar">
+      <div class="stat-pill">
+        <span class="stat-num" id="stat-total">—</span>
+        <span class="stat-label">fatalities</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num" id="stat-crashes">—</span>
+        <span class="stat-label">crashes shown</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num" id="stat-night">—</span>
+        <span class="stat-label">% at night</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num" id="stat-ped">—</span>
+        <span class="stat-label">% pedestrian</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN LAYOUT ────────────────────────────────────────── -->
+  <main id="main-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside id="sidebar">
+
+      <!-- FILTER PANEL -->
+      <section class="panel" id="filter-panel">
+        <h2>Filters</h2>
+
+        <label class="filter-group">
+          Year
+          <select id="filter-year">
+            <option value="all">All (2019–2023)</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+            <option value="2020">2020</option>
+            <option value="2019">2019</option>
+          </select>
+        </label>
+
+        <label class="filter-group">
+          Crash Type
+          <select id="filter-type">
+            <option value="all">All Types</option>
+            <option value="pedestrian">Pedestrian Involved</option>
+            <option value="cyclist">Cyclist Involved</option>
+            <option value="night">Night-time</option>
+            <option value="weather">Adverse Weather</option>
+            <option value="intersection">Intersection-related</option>
+            <option value="workzone">Work Zone</option>
+          </select>
+        </label>
+
+        <label class="filter-group">
+          Road Type
+          <select id="filter-road">
+            <option value="all">All Roads</option>
+            <option value="Interstate">Interstate</option>
+            <option value="Freeway">Freeway / Expressway</option>
+            <option value="Principal Arterial">Principal Arterial</option>
+            <option value="Minor Arterial">Minor Arterial</option>
+            <option value="Collector">Collector</option>
+            <option value="Local">Local</option>
+          </select>
+        </label>
+
+        <label class="filter-group">
+          Setting
+          <select id="filter-rur">
+            <option value="all">Urban + Rural</option>
+            <option value="1">Rural only</option>
+            <option value="0">Urban only</option>
+          </select>
+        </label>
+
+        <button id="reset-btn">Reset Filters</button>
+      </section>
+
+      <!-- CHARTS PANEL -->
+      <section class="panel" id="charts-panel">
+        <h2>Fatalities by Year</h2>
+        <div id="chart-year" class="bar-chart"></div>
+
+        <h2 style="margin-top:18px">By Crash Type</h2>
+        <div id="chart-type" class="bar-chart"></div>
+
+        <h2 style="margin-top:18px">Top 10 States</h2>
+        <div id="chart-state" class="bar-chart"></div>
+      </section>
+
+    </aside>
+
+    <!-- MAP -->
+    <div id="map-container">
+      <div id="map"></div>
+
+      <!-- LOADING OVERLAY -->
+      <div id="loading-overlay">
+        <div class="loader-box">
+          <div class="spinner"></div>
+          <p id="loading-text">Loading 185,000+ crash records…</p>
+          <p class="loading-sub">Source: NHTSA Fatality Analysis Reporting System</p>
+        </div>
+      </div>
+
+      <!-- MAP LEGEND -->
+      <div id="legend">
+        <div class="legend-title">Crash Density</div>
+        <div class="legend-gradient"></div>
+        <div class="legend-labels">
+          <span>Low</span><span>High</span>
+        </div>
+        <div class="legend-note">Zoom in to see individual crashes</div>
+      </div>
+
+      <!-- POPUP TEMPLATE (hidden) -->
+      <div id="popup-template" style="display:none"></div>
+    </div>
+
+  </main>
+
+  <!-- CRASH DETAIL POPUP (rendered by MapLibre) -->
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

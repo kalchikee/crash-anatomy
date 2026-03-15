@@ -1,0 +1,17 @@
+# Raw FARS downloads (large, reproducible from process_fars.py)
+data/raw/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
